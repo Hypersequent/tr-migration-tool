@@ -202,13 +202,9 @@ For more granular control, these additional commands are available:
 - The tool streams data efficiently, but very large attachments may require more memory
 - Try running with more available RAM or use Docker with increased memory limits
 
-## License
-
-MIT License - See [LICENSE](LICENSE) for details.
-
 ## Contributing
 
-Issues and pull requests are welcome! Please open an issue first to discuss proposed changes.
+Feedback is welcome. Please open an issue to discuss!
 
 ## Related Projects
 
