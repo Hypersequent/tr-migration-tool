@@ -22,7 +22,7 @@ Ensure you can pull the Docker image:
 docker pull ghcr.io/hypersequent/tr-migration-tool:latest
 ```
 
-If not, log in to the GitHub registry with any GitHub account.
+If not, you need to [authenticate with GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-with-a-personal-access-token-classic) using any GitHub account.
 
 ## Configuration
 
@@ -138,6 +138,11 @@ The SQLite file does not contain user lists or any test run content.
 
 - Try adding the `TR_COOKIE` environment variable with your session cookie
 - Some TestRail configurations restrict attachment access
+
+### 500 errors during attachment download
+
+- TestRail may return 500 errors for some attachments due to internal consistency issues
+- These errors are usually tolerable and the migration will continue with other attachments
 
 ### Large databases taking too long
 
