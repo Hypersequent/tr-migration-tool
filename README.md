@@ -4,7 +4,7 @@ A command-line tool for extracting data from TestRail into a portable SQLite dat
 
 ## How to Use
 
-The tool is best run with Docker to ensure isolation from the host system and overall compatibility. Although distributed as a Docker container, it does not need to run in the same environment as TestRail. You can run it anywhere with network access to your TestRail URL, including your local workstation.
+The tool is distributed as a Docker container. This ensures isolation from the host system and compatibility across platforms. You can run it on **any machine with Docker** that has **network access to your TestRail URL** — including your local workstation.
 
 ## Preparation
 
