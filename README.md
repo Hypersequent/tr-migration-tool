@@ -86,9 +86,11 @@ This command:
 - Parses and downloads all attachments referenced in test cases
 - Stores everything in `data/{CLIENT_NAME}.sqlite3`
 
-Depending on the size of your TestRail installation, this command can run from minutes to hours.
+Depending on the size of your TestRail installation, this command can run from minutes to hours. Compression runs automatically at the end.
 
-On completion, you can compress the SQLite file:
+Once complete, transmit the compressed file `data/{CLIENT_NAME}.sqlite3.zst` to the QA Sphere team for importing.
+
+If you need to re-run compression manually:
 
 ```bash
 docker run --rm \
