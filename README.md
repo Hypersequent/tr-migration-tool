@@ -25,7 +25,7 @@ If not, log in to the GitHub registry with any GitHub account.
 
 ## Configuration
 
-Create a `.env` file with your TestRail credentials:
+Create an `env.txt` file with your TestRail credentials:
 
 ```bash
 # TestRail API credentials
@@ -39,6 +39,8 @@ CLIENT_NAME='yourorg'
 ```
 
 **Note:** `TR_URL` must be the external TestRail URL accessible from your browser, not an internal or Docker container address.
+
+**Warning:** This file contains sensitive credentials. Delete it after completing the migration.
 
 ### Getting the Session Cookie
 
@@ -57,7 +59,7 @@ Run the following command to check that the TestRail API is working:
 docker run --rm \
   --user "$(id -u):$(id -g)" \
   -v "$(pwd)/data:/app/data" \
-  --env-file .env \
+  --env-file env.txt \
   ghcr.io/hypersequent/tr-migration-tool:latest \
   list_projects
 ```
@@ -72,7 +74,7 @@ Once verified, launch the tool to pull all data:
 docker run --rm \
   --user "$(id -u):$(id -g)" \
   -v "$(pwd)/data:/app/data" \
-  --env-file .env \
+  --env-file env.txt \
   ghcr.io/hypersequent/tr-migration-tool:latest \
   pull_all
 ```
@@ -91,7 +93,7 @@ On completion, you can compress the SQLite file:
 docker run --rm \
   --user "$(id -u):$(id -g)" \
   -v "$(pwd)/data:/app/data" \
-  --env-file .env \
+  --env-file env.txt \
   ghcr.io/hypersequent/tr-migration-tool:latest \
   compress
 ```
