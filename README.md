@@ -13,6 +13,7 @@ Create an empty directory on your system and navigate into it:
 ```bash
 mkdir tr-to-qas
 cd tr-to-qas
+mkdir data
 ```
 
 Ensure you can pull the Docker image:
