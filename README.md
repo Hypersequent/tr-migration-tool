@@ -30,13 +30,13 @@ Create an `env.txt` file with your TestRail credentials:
 
 ```bash
 # TestRail API credentials
-TR_USERNAME='your-email@example.com'
-TR_PASSWORD='your-testrail-api-key'
-TR_URL='https://your-org.testrail.io'
-TR_COOKIE='your-testrail-session-cookie'
+TR_USERNAME=your-email@example.com
+TR_PASSWORD=your-testrail-api-key
+TR_URL=https://your-org.testrail.io
+TR_COOKIE=your-testrail-session-cookie
 
 # Client name - used for database filename (alphanumeric only)
-CLIENT_NAME='yourorg'
+CLIENT_NAME=yourorg
 ```
 
 **Note:** `TR_URL` must be the external TestRail URL accessible from your browser, not an internal or Docker container address.
