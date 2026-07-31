@@ -65,11 +65,18 @@ docker run --rm \
   list_projects
 ```
 
-If everything is configured correctly, you should see a list of your TestRail projects.
+If everything is configured correctly, you should see a list of your TestRail projects, one
+per line, with their id, name and status:
+
+```
+12	Website Regression	[active]
+13	Mobile App	[active]
+14	Legacy Suite	[inactive]
+```
 
 ### Pull Data
 
-Once verified, launch the tool to pull all data:
+Once verified, launch the tool to pull your data:
 
 ```bash
 docker run --rm \
@@ -77,20 +84,36 @@ docker run --rm \
   -v "$(pwd)/data:/app/data" \
   --env-file env.txt \
   ghcr.io/hypersequent/tr-migration-tool:latest \
-  pull_all
+  pull
 ```
 
-This command:
-- Fetches all active projects from TestRail
+By default (no flags) this command:
+- Fetches all **active** projects from TestRail
 - Downloads suites, sections, and test cases for each project
 - Parses and downloads all attachments referenced in test cases
 - Stores everything in `data/{CLIENT_NAME}.sqlite3`
+- Compresses the result automatically at the end
 
-Depending on the size of your TestRail installation, this command can run from minutes to hours. Compression runs automatically at the end.
+Depending on the size of your TestRail installation, this command can run from minutes to
+hours.
 
 Once complete, transmit the compressed file `data/{CLIENT_NAME}.sqlite3.zst` to the QA Sphere team for importing.
 
-If you need to re-run compression manually:
+#### Choosing which projects to pull
+
+Add flags after `pull` to control which projects are included:
+
+| Flag | Pulls |
+| --- | --- |
+| *(none)* | Active projects only (the default) |
+| `--all` | Every project, active and archived |
+| `--active` | Active projects only |
+| `--inactive` | Archived (completed) projects only |
+| `--project <id>` | One specific project by id; repeat the flag to add more |
+
+Flags combine, so `pull --active --project 12 --project 15` pulls every active project
+*plus* projects `12` and `15`, even if those two are archived. Project ids come from
+`list_projects`.
 
 ```bash
 docker run --rm \
@@ -98,18 +121,52 @@ docker run --rm \
   -v "$(pwd)/data:/app/data" \
   --env-file env.txt \
   ghcr.io/hypersequent/tr-migration-tool:latest \
-  compress
+  pull --active --project 12 --project 15
+```
+
+#### Running it more than once
+
+It's safe to run `pull` multiple times, including with a different selection each time —
+new data is added to the existing database, not overwritten, and anything already pulled is
+updated in place rather than duplicated. This means you can, for example, pull your active
+projects first and pull a couple of archived ones later, all into the same
+`data/{CLIENT_NAME}.sqlite3`. Each run recompresses the whole file, so the `.zst` always
+reflects everything pulled so far.
+
+If you need to re-run compression manually (e.g. after inspecting the database yourself):
+
+```bash
+docker run --rm \
+  --user "$(id -u):$(id -g)" \
+  -v "$(pwd)/data:/app/data" \
+  --env-file env.txt \
+  ghcr.io/hypersequent/tr-migration-tool:latest \
+  compress_database
 ```
 
 ## Other Commands
 
-#### `pull_all_completed` - Extract Archived Projects
+#### `pull_projects` - Refresh the Project List
 
-Fetches only completed (archived) projects. If you need both active and archived projects, run `pull_all` first, then `pull_all_completed`.
+`list_projects` and `pull` already fetch the project list for you the first time you run
+either of them against an empty database, so this is rarely needed. Run it directly only to
+pick up a project created in TestRail *after* your first pull — otherwise the tool won't
+know it exists.
 
-#### `pull_project_all <project_id>` - Pull Specific Project
+#### `warnings` - Review Issues Found During a Pull
 
-Pull data for a specific project only. Useful when you need to extract a single project.
+Prints anything that went wrong during the last `pull` (e.g. an attachment that failed to
+download), grouped by type. Worth checking after a large pull, especially if it took an
+unusually long time or you saw errors scroll by.
+
+```bash
+docker run --rm \
+  --user "$(id -u):$(id -g)" \
+  -v "$(pwd)/data:/app/data" \
+  --env-file env.txt \
+  ghcr.io/hypersequent/tr-migration-tool:latest \
+  warnings
+```
 
 ## What the SQLite File Contains
 
@@ -148,7 +205,7 @@ The SQLite file does not contain user lists or any test run content.
 
 ### Large databases taking too long
 
-- Use `pull_project_all <project_id>` to extract one project at a time
+- Use `pull --project <project_id>` to extract one project at a time
 - Consider running overnight for very large TestRail instances
 
 ### Out of memory errors
